@@ -45,7 +45,6 @@ export class SignupPage {
     this.userService.userExists(username)
       .first()
       .subscribe((userExists: boolean) => {
-        console.log(userExists)
         if (!userExists) {
           this.authService.createAuthUser({
             email: formUser.email,

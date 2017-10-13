@@ -1,5 +1,5 @@
 import { User } from './../../models/user.model';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable, FirebaseObjectObservable, FirebaseAuthState } from 'angularfire2';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
@@ -16,14 +16,35 @@ import { Observable } from 'rxjs';
 export class UserService extends BaseService {
 
   users: FirebaseListObservable<User[]>;
+  currentUser: FirebaseObjectObservable<User>;
 
   constructor(
     public http: Http,
     public af: AngularFire) {
     super();
 
-      this.users = this.af.database.list(`/users/`);
+    this.listenAuthState();
 
+  }
+
+  private setUsers(uidToExclude: string): void{
+    this.users = <FirebaseListObservable<User[]>>this.af.database.list(`/users`, {
+      query: {
+        orderByChild: 'name'
+      }
+    }).map((users: User[]) => {
+      return users.filter((user: User) => user.$key !== uidToExclude);
+    });
+  }
+
+  private listenAuthState(): void{
+    this.af.auth
+    .subscribe((authState : FirebaseAuthState) =>{
+      if (authState) {
+        this.currentUser =  this.af.database.object(`/users/${authState.auth.uid}`);
+        this.setUsers(authState.auth.uid);
+      }
+    });
   }
 
   create(user: User, uuid: string): firebase.Promise<void> {
@@ -39,7 +60,7 @@ export class UserService extends BaseService {
         equalTo: username
       }
     }).map((user: User[]) => {
-      return user.length > 0;
+      return user.length != 0;
     }).catch(this.handleObservableError);
   }
 }

@@ -1,3 +1,5 @@
+import { ChatService } from './../providers/chat/chat.service';
+import { ChatPage } from './../pages/chat/chat';
 import { CapitalizePipe } from './../pipes/capitalize.pipe';
 import { CustomLoggedHeaderComponent } from './../components/custom-logged-header/custom-logged-header.component';
 import { SigninPage } from './../pages/signin/signin';
@@ -35,6 +37,7 @@ const firebaseAuthConfig = {
     HomePage,
     SignupPage,
     SigninPage,
+    ChatPage,
     CustomLoggedHeaderComponent,
     CapitalizePipe
   ],
@@ -49,14 +52,16 @@ const firebaseAuthConfig = {
     MyApp,
     HomePage,
     SignupPage,
-    SigninPage
+    SigninPage,
+    ChatPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
-    AuthService
+    AuthService,
+    ChatService
   ]
 })
 export class AppModule {}
