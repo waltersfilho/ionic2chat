@@ -26,8 +26,8 @@ export class UserService extends BaseService {
 
   }
 
-  create(user: User): firebase.Promise<void> {
-    return this.af.database.object(`/users/${user.uid}`)
+  create(user: User, uuid: string): firebase.Promise<void> {
+    return this.af.database.object(`/users/${uuid}`)
     .set(user)
     .catch(this.handlePromiseError);
   }
@@ -39,7 +39,7 @@ export class UserService extends BaseService {
         equalTo: username
       }
     }).map((user: User[]) => {
-      return UserService.length > 0;
+      return user.length > 0;
     }).catch(this.handleObservableError);
   }
 }

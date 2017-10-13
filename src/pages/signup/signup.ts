@@ -1,17 +1,10 @@
 import { HomePage } from './../home/home';
-import { User } from './../../models/user.model';
 import { AuthService } from './../../providers/auth/auth.service';
 import { UserService } from './../../providers/user/user.service';
 import { Component } from '@angular/core';
 import { AlertController, IonicPage, NavController, NavParams, Loading, LoadingController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FirebaseAuthState } from 'angularfire2'
-/**
- * Generated class for the SignupPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
 @IonicPage()
 @Component({
@@ -46,13 +39,13 @@ export class SignupPage {
   onSubmit(): void {
 
     let loading: Loading = this.showLoading();
-    let formUser: User = this.signupForm.value;
+    let formUser = this.signupForm.value;
     let username: string = formUser.username;
 
     this.userService.userExists(username)
       .first()
       .subscribe((userExists: boolean) => {
-
+        console.log(userExists)
         if (!userExists) {
           this.authService.createAuthUser({
             email: formUser.email,
@@ -60,9 +53,9 @@ export class SignupPage {
           }).then((authState: FirebaseAuthState) => {
 
             delete formUser.password;
-            formUser.uid = authState.auth.uid;
+            let uuid: string = authState.auth.uid;
 
-            this.userService.create(formUser)
+            this.userService.create(formUser, uuid)
               .then(() => {
                 console.log("usuario cadastrado");
                 this.navCtrl.setRoot(HomePage);
