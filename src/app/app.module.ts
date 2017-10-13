@@ -17,11 +17,11 @@ import { HomePage } from '../pages/home/home';
 import { AngularFireModule, FirebaseAppConfig, AuthProviders, AuthMethods } from 'angularfire2';
 
 const firebaseAppConfig : FirebaseAppConfig = {
-  apiKey: "AIzaSyBkvdL8yO2NWbl5ITKrebLQlHYfqG_ZQos",
-  authDomain: "ionic2-chat-99137.firebaseapp.com",
-  databaseURL: "https://ionic2-chat-99137.firebaseio.com",
-  storageBucket: "ionic2-chat-99137.appspot.com",
-  messagingSenderId: "480301005659"
+  apiKey: "AIzaSyAfhNCK7K9kammfi_3cli59tjKMfzExOM0",
+  authDomain: "ionic2-firebase-chat-69063.firebaseapp.com",
+  databaseURL: "https://ionic2-firebase-chat-69063.firebaseio.com",
+  storageBucket: "ionic2-firebase-chat-69063.appspot.com",
+  messagingSenderId: "460757227172"
 };
 
 const firebaseAuthConfig = {
