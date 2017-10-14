@@ -26,48 +26,59 @@ export class HomePage {
     public authService: AuthService,
     public navCtrl: NavController,
     public userService: UserService,
-    public chatService : ChatService) {
+    public chatService: ChatService) {
 
   }
 
-  ionViewCanEnter() : Promise<boolean>{
+  ionViewCanEnter(): Promise<boolean> {
     return this.authService.authenticated;
   }
 
-  ionViewDidLoad(){
+  ionViewDidLoad() {
     this.chats = this.chatService.chats;
     this.users = this.userService.users;
-    console.log(this.chats);
-    
   }
 
-  onChatCreate(recipientUser: User){
+  onChatCreate(recipientUser: User) : void {
     this.userService.currentUser
-    .first()
-    .subscribe((currentUser: User) => {
-      this.chatService.getDeepChat(currentUser.$key, recipientUser.$key)
       .first()
-      .subscribe((chat: Chat) => {
-        if (chat.hasOwnProperty('$value')) {
+      .subscribe((currentUser: User) => {
+        this.chatService.getDeepChat(currentUser.$key, recipientUser.$key)
+          .first()
+          .subscribe((chat: Chat) => {
+            if (chat.hasOwnProperty('$value')) {
 
-          let timestamp: Object = firebase.database.ServerValue.TIMESTAMP;
+              let timestamp: Object = firebase.database.ServerValue.TIMESTAMP;
 
-          let chat1 = new Chat('', <number>timestamp, recipientUser.name, '');
-          this.chatService.create(chat1, currentUser.$key, recipientUser.$key);
+              let chat1 = new Chat('', <number>timestamp, recipientUser.name, '');
+              this.chatService.create(chat1, currentUser.$key, recipientUser.$key);
 
-          let chat2 = new Chat('', <number>timestamp, currentUser.name, '');
-          this.chatService.create(chat2, currentUser.$key, recipientUser.$key);
-        }
-        
+              let chat2 = new Chat('', <number>timestamp, currentUser.name, '');
+              this.chatService.create(chat2, currentUser.$key, recipientUser.$key);
+            }
+
+          });
       });
-    });
     this.navCtrl.push(ChatPage, {
       recipientUser: recipientUser
-    })
+    });
   }
 
-  onSignUp():void{
+  onSignUp(): void {
     this.navCtrl.push(SignupPage);
+  }
+
+  onChatOpen(chat: Chat): void {
+
+    let recipientUserId: string = chat.$key;
+    this.userService.get(recipientUserId)
+      .first()
+      .subscribe((user: User) => {
+        this.navCtrl.push(ChatPage, {
+          recipientUser: user
+        });
+      });
+
   }
 
 

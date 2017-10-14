@@ -1,3 +1,5 @@
+import { MessageBoxComponent } from './../components/message-box/message-box.component';
+import { MessageService } from './../providers/message/message.service';
 import { ChatService } from './../providers/chat/chat.service';
 import { ChatPage } from './../pages/chat/chat';
 import { CapitalizePipe } from './../pipes/capitalize.pipe';
@@ -39,7 +41,8 @@ const firebaseAuthConfig = {
     SigninPage,
     ChatPage,
     CustomLoggedHeaderComponent,
-    CapitalizePipe
+    CapitalizePipe,
+    MessageBoxComponent
   ],
   imports: [
     BrowserModule,
@@ -61,7 +64,8 @@ const firebaseAuthConfig = {
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
     AuthService,
-    ChatService
+    ChatService,
+    MessageService
   ]
 })
 export class AppModule {}

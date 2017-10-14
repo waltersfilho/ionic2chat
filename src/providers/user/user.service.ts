@@ -22,7 +22,6 @@ export class UserService extends BaseService {
     public http: Http,
     public af: AngularFire) {
     super();
-
     this.listenAuthState();
 
   }
@@ -62,5 +61,10 @@ export class UserService extends BaseService {
     }).map((user: User[]) => {
       return user.length != 0;
     }).catch(this.handleObservableError);
+  }
+
+  get(userId: string): FirebaseObjectObservable<User>{
+    return <FirebaseObjectObservable<User>>this.af.database.object(`/users/${userId}`)
+    .catch(this.handleObservableError);
   }
 }
