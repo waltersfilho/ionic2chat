@@ -1,3 +1,6 @@
+import { UserProfilePage } from './../pages/user-profile/user-profile';
+import { UserMenuComponent } from './../components/user-menu/user-menu.component';
+import { UserInfoComponent } from './../components/user-info/user-info.component';
 import { MessageBoxComponent } from './../components/message-box/message-box.component';
 import { MessageService } from './../providers/message/message.service';
 import { ChatService } from './../providers/chat/chat.service';
@@ -40,9 +43,12 @@ const firebaseAuthConfig = {
     SignupPage,
     SigninPage,
     ChatPage,
+    UserProfilePage,
     CustomLoggedHeaderComponent,
     CapitalizePipe,
-    MessageBoxComponent
+    MessageBoxComponent,
+    UserInfoComponent,
+    UserMenuComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +62,8 @@ const firebaseAuthConfig = {
     HomePage,
     SignupPage,
     SigninPage,
-    ChatPage
+    ChatPage,
+    UserProfilePage
   ],
   providers: [
     StatusBar,

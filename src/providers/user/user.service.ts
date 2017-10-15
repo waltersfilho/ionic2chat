@@ -1,9 +1,9 @@
 import { User } from './../../models/user.model';
-import { AngularFire, FirebaseListObservable, FirebaseObjectObservable, FirebaseAuthState } from 'angularfire2';
-import { Injectable } from '@angular/core';
+import { AngularFire, FirebaseListObservable, FirebaseObjectObservable, FirebaseAuthState, FirebaseApp } from 'angularfire2';
+import { Injectable, Inject } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import {BaseService} from "../base/base.service"
+import { BaseService } from "../base/base.service"
 import { Observable } from 'rxjs';
 
 /*
@@ -20,13 +20,15 @@ export class UserService extends BaseService {
 
   constructor(
     public http: Http,
-    public af: AngularFire) {
+    public af: AngularFire,
+    @Inject(FirebaseApp) public firebaseApp: any
+  ) {
     super();
     this.listenAuthState();
 
   }
 
-  private setUsers(uidToExclude: string): void{
+  private setUsers(uidToExclude: string): void {
     this.users = <FirebaseListObservable<User[]>>this.af.database.list(`/users`, {
       query: {
         orderByChild: 'name'
@@ -36,25 +38,25 @@ export class UserService extends BaseService {
     });
   }
 
-  private listenAuthState(): void{
+  private listenAuthState(): void {
     this.af.auth
-    .subscribe((authState : FirebaseAuthState) =>{
-      if (authState) {
-        this.currentUser =  this.af.database.object(`/users/${authState.auth.uid}`);
-        this.setUsers(authState.auth.uid);
-      }
-    });
+      .subscribe((authState: FirebaseAuthState) => {
+        if (authState) {
+          this.currentUser = this.af.database.object(`/users/${authState.auth.uid}`);
+          this.setUsers(authState.auth.uid);
+        }
+      });
   }
 
   create(user: User, uuid: string): firebase.Promise<void> {
     return this.af.database.object(`/users/${uuid}`)
-    .set(user)
-    .catch(this.handlePromiseError);
+      .set(user)
+      .catch(this.handlePromiseError);
   }
 
-  userExists(username:string): Observable<boolean> {
-    return this.af.database.list(`/users`,{
-      query:{
+  userExists(username: string): Observable<boolean> {
+    return this.af.database.list(`/users`, {
+      query: {
         orderByChild: 'username',
         equalTo: username
       }
@@ -63,8 +65,22 @@ export class UserService extends BaseService {
     }).catch(this.handleObservableError);
   }
 
-  get(userId: string): FirebaseObjectObservable<User>{
+  get(userId: string): FirebaseObjectObservable<User> {
     return <FirebaseObjectObservable<User>>this.af.database.object(`/users/${userId}`)
-    .catch(this.handleObservableError);
+      .catch(this.handleObservableError);
+  }
+
+  edit(user: { name: string, username: string, photo: string }): firebase.Promise<void> {
+    return this.currentUser
+      .update(user)
+      .catch(this.handlePromiseError);
+  }
+
+  uploadPhoto(file: File, userId: string): firebase.storage.UploadTask {
+    return this.firebaseApp
+      .storage()
+      .ref()
+      .child(`/users/${userId}`)
+      .put(file);
   }
 }

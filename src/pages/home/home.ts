@@ -6,7 +6,7 @@ import { UserService } from './../../providers/user/user.service';
 import { User } from './../../models/user.model';
 import { SignupPage } from './../signup/signup';
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, MenuController } from 'ionic-angular';
 
 import firebase from 'firebase'
 
@@ -25,6 +25,7 @@ export class HomePage {
   constructor(
     public authService: AuthService,
     public navCtrl: NavController,
+    public menuCtrl: MenuController,
     public userService: UserService,
     public chatService: ChatService) {
 
@@ -37,9 +38,34 @@ export class HomePage {
   ionViewDidLoad() {
     this.chats = this.chatService.chats;
     this.users = this.userService.users;
+
+    this.menuCtrl.enable(true, 'userMenu');
   }
 
-  onChatCreate(recipientUser: User) : void {
+  filterItems(event: any): void {
+    let searchTerm: string = event.target.value;
+
+    this.chats = this.chatService.chats;
+    this.users = this.userService.users;
+
+    if (searchTerm) {
+
+      switch (this.view) {
+        case 'chats':
+          this.chats = <FirebaseListObservable<Chat[]>>this.chats
+            .map((chats: Chat[]) => chats.filter((chat: Chat) => (chat.title.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1)));
+          break;
+        case 'users':
+          this.users = <FirebaseListObservable<User[]>>this.users
+            .map((users: User[]) => users.filter((user: User) => (user.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1)));
+          break;
+      }
+
+    }
+
+  }
+
+  onChatCreate(recipientUser: User): void {
     this.userService.currentUser
       .first()
       .subscribe((currentUser: User) => {
